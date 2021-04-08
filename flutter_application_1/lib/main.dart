@@ -78,5 +78,3 @@ class HomeOne extends StatelessWidget {
     );
   }
 }
-
-
