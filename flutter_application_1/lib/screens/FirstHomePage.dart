@@ -20,6 +20,8 @@ class HomepAgeFirstUI extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: 25.0),
+
+          // --- Top appbar like Section ---------------------------
           new Padding(
             padding: EdgeInsets.only(
               top: 12.0,
@@ -67,16 +69,20 @@ class HomepAgeFirstUI extends StatelessWidget {
             ),
           ),
           new Divider(),
-          _scrollViewContents(context),
+
+          // --- Rest of the body
+          _mainBody(context),
         ],
       ),
     );
   }
 }
 
-Widget _scrollViewContents(BuildContext context) {
+Widget _mainBody(BuildContext context) {
   return new Column(
     children: [
+      // --- SearchBar Section  ---------------------------
+
       new Padding(
         padding: EdgeInsets.only(
           top: 4.0,
@@ -113,10 +119,13 @@ Widget _scrollViewContents(BuildContext context) {
           ),
         ),
       ),
-      ///////////////////////////////////////////////////////////////////
+
       new SizedBox(
         height: 3.0,
       ),
+
+      // --- OffersNearBy Section ---------------------------
+
       new Padding(
         padding: EdgeInsets.only(
           right: 12.0,
@@ -143,18 +152,22 @@ Widget _scrollViewContents(BuildContext context) {
           ),
         ),
       ),
-      ///////////////////////////////////////////////////////////////////
+
       new SizedBox(
         height: 3.0,
       ),
+
       new Container(
         height: 103.0,
         child: _horizontalListView(context),
       ),
-      ///////////////////////////////////////////////////////////////////
+
       new SizedBox(
         height: 3.0,
       ),
+
+      // --- TodaysOffer Section ---------------------------
+
       new Padding(
         padding: EdgeInsets.only(
           right: 12.0,
@@ -185,11 +198,13 @@ Widget _scrollViewContents(BuildContext context) {
         height: 167.0,
         child: _secondHorizontalListView(context),
       ),
-      ///////////////////////////////////////////////////////////////////
+
       new Divider(),
       new SizedBox(
         height: 3.0,
       ),
+
+      // --- BottomGridView Section ---------------------------
       new Padding(
         padding: EdgeInsets.only(
           right: 12.0,
@@ -201,91 +216,111 @@ Widget _scrollViewContents(BuildContext context) {
           child: _gridView(context),
         ),
       ),
-      ///////////////////////////////////////////////////////////////////
     ],
   );
 }
 
 /// ------------------INDIVIDUAL WIDGET START FROM HERE--------------------------
+///
+//---BottomGridview Main Section----
+//
+//
 Widget _gridView(BuildContext context) {
+  List data = [
+    {
+      'image': 'assets/fork.png',
+      'name': 'Restaurent',
+      'nearby': '3 near by',
+      'color': '#5779FF',
+    },
+    {
+      'image': 'assets/fork.png',
+      'name': 'Hypermarket',
+      'nearby': '2 near by',
+      'color': '#2900FF'
+    },
+    {
+      'image': 'assets/fashion.png',
+      'name': 'Textiles',
+      'nearby': '5 near by',
+      'color': '#12CE44'
+    },
+    {
+      'image': 'assets/monitor.png',
+      'name': 'Electronics',
+      'nearby': '1 near by',
+      'color': '#FF9100'
+    },
+  ];
   return MediaQuery.removePadding(
     context: context,
     removeTop: true,
     removeBottom: true,
     removeLeft: true,
     removeRight: true,
-    child: GridView.count(
-      crossAxisCount: 2,
-      scrollDirection: Axis.vertical,
-      childAspectRatio: 3 / 2,
-      physics: NeverScrollableScrollPhysics(),
-      children: [
-        Card(
-          color: HexColor("#5779FF"),
+    child: GridView.builder(
+      itemCount: data.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 3 / 2,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        return Card(
+          color: HexColor(data[index]['color']),
           child: new Padding(
             padding: EdgeInsets.all(14.0),
-            child: _gridCardViewContents(context),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: new Image.asset(
+                        data[index]['image'],
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                    ),
+                    Container(
+                      child: new Text(
+                        data[index]['nearby'],
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                new Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      child: new Text(
+                        data[index]['name'],
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        Card(
-          color: HexColor("#2900FF"),
-        ),
-        Card(
-          color: HexColor("#12CE44"),
-        ),
-        Card(
-          color: HexColor("#FF9100"),
-        ),
-      ],
+        );
+      },
     ),
   );
 }
-
-Widget _gridCardViewContents(BuildContext context) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            child: new Image.asset(
-              "assets/fork.png",
-              width: 40.0,
-              height: 40.0,
-            ),
-          ),
-          Container(
-            child: new Text(
-              '3 near by',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w500,
-                fontSize: 12.0,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-      new Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            child: new Text(
-              'Restaurent',
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 16.0,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
-}
+//
+//
+//---OffersNearBy Main Section---
 
 Widget _horizontalListView(BuildContext context) {
   return Expanded(
@@ -317,6 +352,10 @@ Widget _cardView(BuildContext context) {
     ),
   );
 }
+
+//
+//
+//---TodaysOffer Section Main Section---
 
 Widget _secondHorizontalListView(BuildContext context) {
   return Expanded(

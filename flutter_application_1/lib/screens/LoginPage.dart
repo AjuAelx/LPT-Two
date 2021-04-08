@@ -49,25 +49,28 @@ Widget _tabSection(BuildContext context) {
       children: <Widget>[
         new Container(
           alignment: Alignment.center,
-          child: TabBar(
-            indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(
-                  width: 3,
-                  color: HexColor("#FC4B4B"),
+          child: PreferredSize(
+            preferredSize: new Size(45.0, 100.0),
+            child: TabBar(
+              indicator: UnderlineTabIndicator(
+                  borderSide: BorderSide(
+                    width: 3,
+                    color: HexColor("#FC4B4B"),
+                  ),
+                  insets: EdgeInsets.only(
+                    left: 32,
+                    right: 32,
+                    bottom: 4,
+                  )),
+              tabs: [
+                Tab(
+                  text: "Log In",
                 ),
-                insets: EdgeInsets.only(
-                  left: 32,
-                  right: 32,
-                  bottom: 4,
-                )),
-            tabs: [
-              Tab(
-                text: "Log In",
-              ),
-              Tab(
-                text: "Sign Up",
-              ),
-            ],
+                Tab(
+                  text: "Sign Up",
+                ),
+              ],
+            ),
           ),
         ),
         new Container(
