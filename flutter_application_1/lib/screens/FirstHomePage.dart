@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/model/FlutterStatus.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
 
 class HomePage1 extends StatelessWidget {
   @override
@@ -62,7 +64,15 @@ class HomepAgeFirstUI extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    new Icon(Icons.person_outline),
+                    new IconButton(
+                      onPressed: () {
+                        print('clicked');
+                        CheckStatus checkStatus =
+                            Provider.of<CheckStatus>(context, listen: false);
+                        checkStatus.isAuthentificated = false;
+                      },
+                      icon: Icon(Icons.person_outline),
+                    ),
                   ],
                 ),
               ],

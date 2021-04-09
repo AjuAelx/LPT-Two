@@ -3,11 +3,31 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/model/FlutterModel.dart';
 import 'package:flutter_application_1/screens/LoginPage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+import 'model/FlutterStatus.dart';
+
+void main() => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CheckStatus>(
+            create: (BuildContext context) {
+              return CheckStatus();
+            },
+          ),
+          ChangeNotifierProvider<FlutterModel>(
+            create: (BuildContext context) {
+              return FlutterModel();
+            },
+          ),
+        ],
+        child: MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
   @override
@@ -21,11 +41,31 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         backgroundColor: Colors.white,
       ),
+      // home: HomePage(),
       home: SplashScreen(),
+      // home: _providerTurn(context),
       debugShowCheckedModeBanner: false,
     );
   }
 }
+
+// Widget _providerTurn(BuildContext context) {
+//   return MultiProvider(
+//     providers: [
+//       ChangeNotifierProvider.value(
+//         value: CheckStatus(),
+//       ),
+//     ],
+//     child: Consumer(
+//         // ignore: missing_return
+//         builder: (context, data, child) {
+//       switch (data.status) {
+//         case Status.Uninitialized:
+//           return SplashScreen();
+//       }
+//     }),
+//   );
+// }
 
 class SplashScreen extends StatefulWidget {
   _SplashScreen createState() => _SplashScreen();
@@ -65,16 +105,38 @@ class _SplashScreen extends State<SplashScreen> {
   }
 }
 
-class HomeOne extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: new ThemeData(
-        scaffoldBackgroundColor: HexColor("#1D1E32"),
-        accentColor: HexColor("#FC4B4B"),
-      ),
-      home: LoginPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
+// class HomeOne extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       theme: new ThemeData(
+//         scaffoldBackgroundColor: HexColor("#1D1E32"),
+//         accentColor: HexColor("#FC4B4B"),
+//       ),
+//       home: LoginPage(),
+//       debugShowCheckedModeBanner: false,
+//     );
+//   }
+// }
+
+// import 'package:flutter/cupertino.dart';
+// import 'package:provider/provider.dart';
+
+// void main() => runApp(MyApp());
+
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return FutureProvider<FlutterModel>();
+//   }
+// }
+
+// Future<FlutterModel> someAsyncFunctionToGetMyModel() async{
+//   await Future.delayed(Duration(seconds: 3));
+//   return FlutterModel(someValue: 'new data');
+// }
+
+// class FlutterModel {
+//    FlutterModel({this.someValue});
+//    String someValue = 'Hello';
+// }
