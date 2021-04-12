@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/FlutterModel.dart';
 import 'package:flutter_application_1/model/FlutterStatus.dart';
-import 'package:flutter_application_1/screens/FirstHomePage.dart';
+import 'package:flutter_application_1/screens/BottoNavigationBar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +9,13 @@ import 'package:provider/provider.dart';
 class HomeOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // SystemChrome.setSystemUIOverlayStyle(
+    //   SystemUiOverlayStyle(
+    //     statusBarColor: HexColor("#1D1E32"),
+    //     statusBarBrightness: Brightness.light,
+    //     statusBarIconBrightness: Brightness.light,
+    //   ),
+    // );
     return Consumer<CheckStatus>(
       builder: (BuildContext context, CheckStatus data, Widget child) {
         return MaterialApp(
@@ -16,7 +23,7 @@ class HomeOne extends StatelessWidget {
             scaffoldBackgroundColor: HexColor("#1D1E32"),
             accentColor: HexColor("#FC4B4B"),
           ),
-          home: data.isAuthentificated ? HomePage1() : LoginPage(),
+          home: data.isAuthentificated ? BottomNav() : LoginPage(),
           debugShowCheckedModeBanner: false,
         );
       },
@@ -36,10 +43,6 @@ class HomeOne extends StatelessWidget {
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // double width = MediaQuery.of(context).size.width;
-    // double height = MediaQuery.of(context).size.height;
-    // final TextEditingController controller = TextEditingController();
-
     return Scaffold(
       appBar: new AppBar(
         toolbarHeight: 150.0,

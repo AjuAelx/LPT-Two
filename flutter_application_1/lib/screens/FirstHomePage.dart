@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/FlutterStatus.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,10 +9,17 @@ import 'package:provider/provider.dart';
 class HomePage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: HomepAgeFirstUI(),
+    return ChangeNotifierProvider(
+      create: (context) => HomePageProviderData(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: HomepAgeFirstUI(),
+      ),
     );
+    // return Scaffold(
+    //   backgroundColor: Colors.white,
+    //   body: HomepAgeFirstUI(),
+    // );
   }
 }
 
@@ -51,12 +60,21 @@ class HomepAgeFirstUI extends StatelessWidget {
                     ),
                     new Text(
                       'Select from here',
-                      style: GoogleFonts.poppins(
-                        color: HexColor("#373539"),
+                      style: new TextStyle(
+                        fontSize: 16.0,
                         fontWeight: FontWeight.bold,
+                        color: HexColor('#373539'),
                       ),
-                      textAlign: TextAlign.center,
                     ),
+                    // new Container(
+                    //   height: 20.0,
+                    //   width: 150.0,
+
+                    //   decoration: new BoxDecoration(
+                    //     border: new Border.all(color: Colors.red),
+                    //   ),
+                    //   child: _searchableDropDown(context),
+                    // ),
                   ],
                 ),
                 new Spacer(),
@@ -87,6 +105,24 @@ class HomepAgeFirstUI extends StatelessWidget {
     );
   }
 }
+
+// Widget _searchableDropDown(BuildContext context) {
+//   return SearchableDropdown.single(
+//     items: [],
+//     hint: Text(
+//       'Munnar',
+//       style: new TextStyle(
+//         fontSize: 16.0,
+//         fontWeight: FontWeight.bold,
+//         color: HexColor('#373539'),
+//       ),
+//     ),
+//     onChanged: () async {},
+//     dialogBox: false,
+//     isExpanded: true,
+//     displayClearIcon: false,
+//   );
+// }
 
 Widget _mainBody(BuildContext context) {
   return new Column(
@@ -333,50 +369,94 @@ Widget _gridView(BuildContext context) {
 //---OffersNearBy Main Section---
 
 Widget _horizontalListView(BuildContext context) {
-  return Expanded(
-    child: new ListView(
-      scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.only(right: 11.0, left: 11.0),
-      children: <Widget>[
-        _cardView(context),
-      ],
-    ),
+  // List imageData = [
+  //   // 'https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg',
+  //   // 'https://s3.amazonaws.com/eventalog-assests-storage/fb30e06b-fa3f-4c8b-9937-828907d74edf.png',
+  //   // 'https://yt3.ggpht.com/ytc/AAUvwnhnPTYPyvEeRm6fsRNTowHqY2ODGbYOXEqoV0mNXg=s900-c-k-c0x00ffffff-no-rj',
+  //   // 'https://textilesgarmentsbusinessdirectory.com/wp-content/uploads/2018/01/milan-design-kochi.jpg',
+  //   // 'https://logan.nnnow.com/content/dam/nnnow-project/20-nov-2020/uspa-polo-cat2/20NOV20-HP-USPA-CAT2-TOPBANNER-APP.jpg',
+  //   'assets/kalyanSilks.jpg',
+  //   'assets/seematti.jpg',
+  //   'assets/jayalakshmi.jpeg',
+  //   'assets/alukkas.jpg0,'
+  // ];
+  // return new Consumer<
+  return new ListView.builder(
+    scrollDirection: Axis.horizontal,
+    padding: EdgeInsets.only(right: 11.0, left: 11.0),
+    // itemCount: imageData.length,
+    itemCount: Provider.of<HomePageProviderData>(context).listCount,
+    itemBuilder: (BuildContext context, int i) {
+      return new Container(
+        width: 103.0,
+        height: 103.0,
+        child: new Card(
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          color: Colors.red,
+          child: Image.asset(
+            Provider.of<HomePageProviderData>(context).imageData[i],
+            // "",
+            // "https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg",
+
+            fit: BoxFit.fill,
+          ),
+        ),
+      );
+    },
   );
+  // return new ListView(
+  //   scrollDirection: Axis.horizontal,
+  //   padding: EdgeInsets.only(right: 11.0, left: 11.0),
+  // children: <Widget>[
+  //   _cardView(context),
+  // ],
+  // );
+  // );
 }
 
-Widget _cardView(BuildContext context) {
-  return new Container(
-    width: 103.0,
-    height: 103.0,
-    child: new Card(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      color: Colors.red,
-      child: Image.network(
-        // "",
-        "https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg",
-        fit: BoxFit.fill,
-      ),
-    ),
-  );
-}
+// Widget _cardView(BuildContext context) {
+//   // List imageData = [
+//   //   'https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg',
+//   //   'https://textilesgarmentsbusinessdirectory.com/wp-content/uploads/2018/01/milan-design-kochi.jpg',
+//   // ];
+//   return new Container(
+//     width: 103.0,
+//     height: 103.0,
+//     child: new Card(
+//       clipBehavior: Clip.antiAliasWithSaveLayer,
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(5.0),
+//       ),
+//       color: Colors.red,
+//       child: Image.network(
+//         // "",
+//         // "https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg",
+
+//         fit: BoxFit.fill,
+//       ),
+//     ),
+//   );
+// }
+
+class HorizontalViewProvider with ChangeNotifier {}
 
 //
 //
 //---TodaysOffer Section Main Section---
 
 Widget _secondHorizontalListView(BuildContext context) {
-  return Expanded(
-    child: new ListView(
-      scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.only(right: 11.0, left: 11.0),
-      children: <Widget>[
-        _secondCardView(context),
-      ],
-    ),
+  // return Expanded(
+  return new ListView(
+    scrollDirection: Axis.horizontal,
+    padding: EdgeInsets.only(right: 11.0, left: 11.0),
+    children: <Widget>[
+      _secondCardView(context),
+    ],
   );
+  // );
 }
 
 Widget _secondCardView(BuildContext context) {
@@ -389,10 +469,33 @@ Widget _secondCardView(BuildContext context) {
         borderRadius: BorderRadius.circular(5.0),
       ),
       color: Colors.red,
-      child: Image.network(
-        "https://fsa.zobj.net/crop.php?r=jKJ54nY70YI_7AmLmWR5dF-PYh6LZ_TzJX1fHKTFqKUPH30wmn7p3x8q_Pz3h5g_Kx1FHDu3QP4dZ0H1Obyr7uTE6e0rvmRyoed1d5BOpUevT8760AFNZ63WpPoRS43mdWiuTYHc3PjE74_l",
+      child: Image.asset(
+        "assets/kfc.jpg",
         fit: BoxFit.fill,
       ),
     ),
   );
+}
+
+class HomePageProviderData with ChangeNotifier {
+  List imageData = [];
+  // List imageData = [
+  //   'assets/kalyanSilks.jpg',
+  //   'assets/seematti.jpg',
+  //   'assets/jayalakshmi.jpeg',
+  //   'assets/alukas.jpg'
+  // ];
+
+  UnmodifiableListView get listData {
+    return UnmodifiableListView(imageData);
+  }
+
+  int get listCount {
+    return imageData.length;
+  }
+
+  // void addData(String data) {
+  //   imageData.add(data);
+  //   notifyListeners();
+  // }
 }

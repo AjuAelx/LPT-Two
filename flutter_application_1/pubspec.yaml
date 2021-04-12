@@ -26,8 +26,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^1.1.1
   hexcolor: ^2.0.3
+  http: ^0.13.1
   intl_phone_number_input: ^0.7.0+1
   provider: ^5.0.0
+  searchable_dropdown: ^1.1.3
   shared_preferences: ^2.0.5
 
 dev_dependencies:
@@ -48,6 +50,12 @@ flutter:
     - assets/fork.png
     - assets/fashion.png
     - assets/monitor.png
+    - assets/home.png
+    - assets/jayalakshmi.jpeg
+    - assets/kalyanSilks.jpg
+    - assets/seematti.jpg
+    - assets/alukas.jpg
+    - assets/kfc.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

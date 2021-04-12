@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckStatus with ChangeNotifier {
   String who, what;
-  bool _isAuthentificated = true;
+  bool _isAuthentificated = false;
 
   bool get isAuthentificated {
     return this._isAuthentificated;
