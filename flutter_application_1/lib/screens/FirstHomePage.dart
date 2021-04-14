@@ -1,30 +1,29 @@
-import 'dart:collection';
-
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/DataFolder/Post.dart';
+import 'package:flutter_application_1/PreferenceManager/PrefManager.dart';
+// import 'package:flutter_application_1/PreferenceManager/PrefManager.dart';
 import 'package:flutter_application_1/model/FlutterStatus.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class HomePage1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => HomePageProviderData(),
+    return ChangeNotifierProvider.value(
+      value: HomePageProviderData(),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: HomepAgeFirstUI(),
       ),
     );
-    // return Scaffold(
-    //   backgroundColor: Colors.white,
-    //   body: HomepAgeFirstUI(),
-    // );
   }
 }
 
 class HomepAgeFirstUI extends StatelessWidget {
-  // final List cards = new List.generate(20, (i) => new GrisCards());
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -59,7 +58,7 @@ class HomepAgeFirstUI extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     new Text(
-                      'Select from here',
+                      'Select from there',
                       style: new TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
@@ -214,36 +213,42 @@ Widget _mainBody(BuildContext context) {
 
       // --- TodaysOffer Section ---------------------------
 
-      new Padding(
-        padding: EdgeInsets.only(
-          right: 12.0,
-          left: 12.0,
-        ),
-        child: new Container(
-          child: new Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              new Text(
-                "Todays offers on near by restaurant & Hotels",
-                style: GoogleFonts.poppins(
-                  color: HexColor("#4E4E4E"),
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.bold,
-                ),
+      Provider.of<HomePageProviderData>(context).todaysOffersList.length == 0
+          ? SizedBox.shrink()
+          : new Padding(
+              padding: EdgeInsets.only(
+                right: 12.0,
+                left: 12.0,
               ),
-              new Icon(
-                Icons.more_horiz,
-                color: HexColor("#B9B9B9"),
+              child: new Column(
+                children: [
+                  new Container(
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        new Text(
+                          "Todays offers on near by restaurant & Hotels",
+                          style: GoogleFonts.poppins(
+                            color: HexColor("#4E4E4E"),
+                            fontSize: 13.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        new Icon(
+                          Icons.more_horiz,
+                          color: HexColor("#B9B9B9"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    height: 167.0,
+                    child: _secondHorizontalListView(context),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ),
-      new Container(
-        height: 167.0,
-        child: _secondHorizontalListView(context),
-      ),
+            ),
 
       new Divider(),
       new SizedBox(
@@ -257,7 +262,7 @@ Widget _mainBody(BuildContext context) {
           left: 12.0,
         ),
         child: Container(
-          height: MediaQuery.of(context).size.height / 2.8,
+          height: MediaQuery.of(context).size.height / 2.5,
           width: MediaQuery.of(context).size.width,
           child: _gridView(context),
         ),
@@ -305,14 +310,35 @@ Widget _gridView(BuildContext context) {
     removeLeft: true,
     removeRight: true,
     child: GridView.builder(
-      itemCount: data.length,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: Provider.of<HomePageProviderData>(context).categoryList.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 3 / 2,
       ),
       itemBuilder: (BuildContext context, int index) {
         return Card(
-          color: HexColor(data[index]['color']),
+          color: Provider.of<HomePageProviderData>(context)
+                      .categoryList[index]
+                      .categoryName ==
+                  'Restaurant'
+              ? HexColor('#5779FF')
+              : Provider.of<HomePageProviderData>(context)
+                          .categoryList[index]
+                          .categoryName ==
+                      'Hyper Market'
+                  ? HexColor('#2900FF')
+                  : Provider.of<HomePageProviderData>(context)
+                              .categoryList[index]
+                              .categoryName ==
+                          'Textiles'
+                      ? HexColor('#12CE44')
+                      : Provider.of<HomePageProviderData>(context)
+                                  .categoryList[index]
+                                  .categoryName ==
+                              'Electronics'
+                          ? HexColor('#FF9100')
+                          : HexColor('#FF9100'),
           child: new Padding(
             padding: EdgeInsets.all(14.0),
             child: Column(
@@ -331,7 +357,11 @@ Widget _gridView(BuildContext context) {
                     ),
                     Container(
                       child: new Text(
-                        data[index]['nearby'],
+                        Provider.of<HomePageProviderData>(context)
+                                .categoryList[index]
+                                .categorySellerCount +
+                            " near by",
+                        // data[index]['nearby'],
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 12.0,
@@ -346,7 +376,10 @@ Widget _gridView(BuildContext context) {
                   children: [
                     Container(
                       child: new Text(
-                        data[index]['name'],
+                        Provider.of<HomePageProviderData>(context)
+                            .categoryList[index]
+                            .categoryName,
+                        // data[index]['name'],
                         style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -369,23 +402,12 @@ Widget _gridView(BuildContext context) {
 //---OffersNearBy Main Section---
 
 Widget _horizontalListView(BuildContext context) {
-  // List imageData = [
-  //   // 'https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg',
-  //   // 'https://s3.amazonaws.com/eventalog-assests-storage/fb30e06b-fa3f-4c8b-9937-828907d74edf.png',
-  //   // 'https://yt3.ggpht.com/ytc/AAUvwnhnPTYPyvEeRm6fsRNTowHqY2ODGbYOXEqoV0mNXg=s900-c-k-c0x00ffffff-no-rj',
-  //   // 'https://textilesgarmentsbusinessdirectory.com/wp-content/uploads/2018/01/milan-design-kochi.jpg',
-  //   // 'https://logan.nnnow.com/content/dam/nnnow-project/20-nov-2020/uspa-polo-cat2/20NOV20-HP-USPA-CAT2-TOPBANNER-APP.jpg',
-  //   'assets/kalyanSilks.jpg',
-  //   'assets/seematti.jpg',
-  //   'assets/jayalakshmi.jpeg',
-  //   'assets/alukkas.jpg0,'
-  // ];
-  // return new Consumer<
   return new ListView.builder(
     scrollDirection: Axis.horizontal,
     padding: EdgeInsets.only(right: 11.0, left: 11.0),
     // itemCount: imageData.length,
-    itemCount: Provider.of<HomePageProviderData>(context).listCount,
+    itemCount:
+        Provider.of<HomePageProviderData>(context).offersNearbyList.length,
     itemBuilder: (BuildContext context, int i) {
       return new Container(
         width: 103.0,
@@ -396,89 +418,268 @@ Widget _horizontalListView(BuildContext context) {
             borderRadius: BorderRadius.circular(5.0),
           ),
           color: Colors.red,
-          child: Image.asset(
-            Provider.of<HomePageProviderData>(context).imageData[i],
-            // "",
-            // "https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg",
-
-            fit: BoxFit.fill,
+          child: Center(
+            child: new Text(
+              Provider.of<HomePageProviderData>(context)
+                  .offersNearbyList[i]
+                  .offerNearshopName,
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
+          // child: Image(
+          //   image: NetworkImage(
+          // Provider.of<HomePageProviderData>(context)
+          //     .offersNearbyList[i]
+          //     .offerNearPhoto,
+          //   ),
+          // ),
         ),
       );
     },
   );
-  // return new ListView(
-  //   scrollDirection: Axis.horizontal,
-  //   padding: EdgeInsets.only(right: 11.0, left: 11.0),
-  // children: <Widget>[
-  //   _cardView(context),
-  // ],
-  // );
-  // );
 }
-
-// Widget _cardView(BuildContext context) {
-//   // List imageData = [
-//   //   'https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg',
-//   //   'https://textilesgarmentsbusinessdirectory.com/wp-content/uploads/2018/01/milan-design-kochi.jpg',
-//   // ];
-//   return new Container(
-//     width: 103.0,
-//     height: 103.0,
-//     child: new Card(
-//       clipBehavior: Clip.antiAliasWithSaveLayer,
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(5.0),
-//       ),
-//       color: Colors.red,
-//       child: Image.network(
-//         // "",
-//         // "https://kikkidu.com/wp-content/uploads/2011/03/kalyanSilks.jpg",
-
-//         fit: BoxFit.fill,
-//       ),
-//     ),
-//   );
-// }
-
-class HorizontalViewProvider with ChangeNotifier {}
-
-//
-//
-//---TodaysOffer Section Main Section---
 
 Widget _secondHorizontalListView(BuildContext context) {
   // return Expanded(
-  return new ListView(
-    scrollDirection: Axis.horizontal,
-    padding: EdgeInsets.only(right: 11.0, left: 11.0),
-    children: <Widget>[
-      _secondCardView(context),
-    ],
-  );
-  // );
-}
-
-Widget _secondCardView(BuildContext context) {
-  return new Container(
-    width: 122.0,
-    height: 168.0,
-    child: new Card(
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      color: Colors.red,
-      child: Image.asset(
-        "assets/kfc.jpg",
-        fit: BoxFit.fill,
-      ),
-    ),
-  );
+  return new ListView.builder(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.only(right: 11.0, left: 11.0),
+      itemCount:
+          Provider.of<HomePageProviderData>(context).todaysOffersList.length,
+      itemBuilder: (BuildContext context, int i) {
+        return new Container(
+          width: 122.0,
+          height: 168.0,
+          child: new Card(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            color: Colors.red,
+            child: Image(
+              image: NetworkImage(
+                Provider.of<HomePageProviderData>(context)
+                    .todaysOffersList[i]
+                    .todaysOfferPhoto,
+              ),
+            ),
+          ),
+        );
+      });
 }
 
 class HomePageProviderData with ChangeNotifier {
-  List imageData = [];
+  var offersNearbyResponse;
+  var todaysOffersResponse;
+  var categoryResponse;
+  List<DataModelClass> offersNearbyList = [];
+  List<DataModelClass> todaysOffersList = [];
+  List<DataModelClass> categoryList = [];
+
+  HomePageProviderData() {
+    print('going to fetch');
+    fetchOffersNearBy();
+    fetchTodaysOffers();
+    fetchCategoryData();
+  }
+
+  Future<List<DataModelClass>> fetchOffersNearBy() async {
+    print('inside fetch');
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+    Map data;
+    data = {
+      'keyword': 'Koovappally',
+      // 'page': page.toString(),
+      // 'limit': limit.toString()
+    };
+    var body = json.encode(data);
+    var url = PrefManager.baseurl + '/nearby/sellers/offers/list';
+    offersNearbyResponse =
+        await http.post(url, headers: requestHeaders, body: body);
+
+    // offerNearList = json.decode(response.body)['data'];
+
+    // offerNearList = json.decode(response.body)['data'];
+    // if (json.decode(response.body)['status']) {
+    print('yes inside');
+    // var parsed = json.decode(response.body)['data'];
+    var decodedDataForOfferesNearby =
+        json.decode(offersNearbyResponse.body)['data'];
+
+    for (var listdata in decodedDataForOfferesNearby) {
+      DataModelClass dataModelClass = new DataModelClass(
+        offerNearPhoto: listdata["photo"],
+        offerNearshopName: listdata['shopName'],
+      );
+      offersNearbyList.add(dataModelClass);
+    }
+    notifyListeners();
+    print(offersNearbyList.length);
+    // Map<String, dynamic> map = json.decode(response.body);
+
+    // List<dynamic> values = map["data"];
+
+    // if (values.length > 0) {
+    //   for (int i = 0; i < values.length; i++) {
+    //     if (values[i] != null) {
+    //       Map<String, dynamic> map = values[i];
+    //       _postList.add(Post.fromJson(map));
+    //       debugPrint('Id-------${map['id']}');
+    //     }
+    //   }
+    // }
+    return offersNearbyList;
+    // } else {
+    //   // If that call was not successful, throw an error.
+    //   throw Exception('Failed to load post');
+    // }
+  }
+
+  Future<List<DataModelClass>> fetchTodaysOffers() async {
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+    Map secondData;
+    secondData = {
+      'keyword': 'Koovappally',
+    };
+    var body = json.encode(secondData);
+    var url = PrefManager.baseurl + '/seller/offer/list';
+    todaysOffersResponse =
+        await http.post(url, headers: requestHeaders, body: body);
+    var decodedDataForTodaysOffer =
+        json.decode(todaysOffersResponse.body)['data'];
+    for (var listdata in decodedDataForTodaysOffer) {
+      DataModelClass dataModelClass = new DataModelClass(
+        todaysOfferPhoto: listdata["photo"],
+      );
+      todaysOffersList.add(dataModelClass);
+    }
+    notifyListeners();
+    print(todaysOffersList.length);
+    return todaysOffersList;
+  }
+
+  Future<List<DataModelClass>> fetchCategoryData() async {
+    Map<String, String> requestHeaders = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+    Map secondData;
+    secondData = {
+      'keyword': 'Koovappally',
+    };
+    var categoryBody = json.encode(secondData);
+    var categoryUrl = PrefManager.baseurl + '/homepage/category/list';
+    categoryResponse = await http.post(categoryUrl,
+        headers: requestHeaders, body: categoryBody);
+    var decodedDataForCategory = json.decode(categoryResponse.body)['data'];
+    for (var categoryData in decodedDataForCategory) {
+      DataModelClass dataModelClass = new DataModelClass(
+          categoryName: categoryData["name"],
+          categorySellerCount: categoryData["sellerCount"].toString());
+      categoryList.add(dataModelClass);
+    }
+    notifyListeners();
+    print(categoryList.length);
+    return categoryList;
+  }
+  //`````````````````````````````````````````````````````
+  // bool isLoading = true;
+  // var length;
+
+  // DataClass _dataClass = new DataClass();
+  // List<DataItems> list = [];
+
+  // HomePageProviderData() {
+  //   _dataClass.dataItems = list;
+  // }
+
+  // setData(DataClass data) {
+  //   _dataClass = data;
+  //   isLoading = false;
+  //   notifyListeners();
+  // }
+
+  // DataClass getData() {
+  //   return _dataClass;
+  // }
+
+  // Future<DataClass> hitApi() async {
+  //   var response;
+
+  //   // int page = 1, limit = 10;
+
+  // Map<String, String> requestHeaders = {
+  //   'Content-type': 'application/json',
+  //   'Accept': 'application/json',
+  // };
+  // Map data;
+  // data = {
+  //   'keyword': 'Koovappally',
+  //   // 'page': page.toString(),
+  //   // 'limit': limit.toString()
+  // };
+
+  //   var body = json.encode(data);
+  //   var url = PrefManager.baseurl + '/nearby/sellers/offers/list';
+  //   response = await http.post(url, headers: requestHeaders, body: body);
+  //   list = json.decode(response.body)['data'];
+  //   length = json.decode(response.body)['totalLength'];
+
+  //   // var response =
+  //   //     await http.get(PrefManager.baseurl + '/nearby/sellers/offers/list');
+  //   final Map parsed = json.decode(response.body);
+  //   DataClass dataClass = DataClass.fromJson(parsed);
+  //   return dataClass;
+  // }
+  //
+  // ```````````````````````````````````````````````````````````````````
+
+  // List offerNearList = [];
+  // var length;
+  // var response;
+  // int page = 1, limit = 10;
+
+  // HomePageProviderData() {
+  //   offerNear();
+  // }
+
+  // Future<void> offerNear() async {
+  // Map<String, String> requestHeaders = {
+  //   'Content-type': 'application/json',
+  //   'Accept': 'application/json',
+  // };
+  // Map data;
+  // data = {
+  //   'keyword': 'Koovappally',
+  //   'page': page.toString(),
+  //   'limit': limit.toString()
+  // };
+
+  // var body = json.encode(data);
+  // var url = PrefManager.baseurl + '/nearby/sellers/offers/list';
+  // response = await http.post(url, headers: requestHeaders, body: body);
+  // offerNearList = json.decode(response.body)['data'];
+  //   length = json.decode(response.body)['totalLength'];
+  //   print(length.toString());
+  // }
+
+  // int get urlCount {
+  //   return length;
+  // }
+
+  // UnmodifiableListView get listData {
+  //   return UnmodifiableListView(offerNearList);
+  // }
+
   // List imageData = [
   //   'assets/kalyanSilks.jpg',
   //   'assets/seematti.jpg',
@@ -486,13 +687,13 @@ class HomePageProviderData with ChangeNotifier {
   //   'assets/alukas.jpg'
   // ];
 
-  UnmodifiableListView get listData {
-    return UnmodifiableListView(imageData);
-  }
+  // UnmodifiableListView get listData {
+  //   return UnmodifiableListView(imageData);
+  // }
 
-  int get listCount {
-    return imageData.length;
-  }
+  // int get listCount {
+  //   return imageData.length;
+  // }
 
   // void addData(String data) {
   //   imageData.add(data);

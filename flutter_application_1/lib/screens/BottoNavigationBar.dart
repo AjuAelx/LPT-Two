@@ -13,9 +13,10 @@ class BottomNav extends StatefulWidget {
 class _BottomNavState extends State<BottomNav> {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NavigationBottomProvider>(
+    return 
+    ChangeNotifierProvider<NavigationBottomProvider>(
       create: (context) => NavigationBottomProvider(),
-      child: Consumer<NavigationBottomProvider>(
+       child: Consumer<NavigationBottomProvider>(
         builder: (context, data, child) {
           return Scaffold(
             body: data.currentScreen,
@@ -60,7 +61,7 @@ class _BottomNavState extends State<BottomNav> {
             ),
           );
         },
-      ),
+       ),
     );
   }
 }

@@ -3,15 +3,16 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_1/model/FlutterModel.dart';
+import 'package:flutter_application_1/screens/FirstHomePage.dart';
 import 'package:flutter_application_1/screens/LoginPage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 
+import 'model/FlutterModel.dart';
 import 'model/FlutterStatus.dart';
 
-void main() => runApp(
+Future<void> main() async => runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider<CheckStatus>(
@@ -24,6 +25,8 @@ void main() => runApp(
               return FlutterModel();
             },
           ),
+          ChangeNotifierProvider<HomePageProviderData>.value(
+              value: HomePageProviderData()),
         ],
         child: MyApp(),
       ),
@@ -74,6 +77,13 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreen extends State<SplashScreen> {
+  //this is for fetch data from server
+  // hitApi() async {
+  //   print('inside hit');
+  //   DataClass data = await Provider.of<HomePageProviderData>(context).hitApi();
+  //   Provider.of<HomePageProviderData>(context).setData(data);
+  // }
+
   void initState() {
     super.initState();
     Timer(
@@ -90,18 +100,31 @@ class _SplashScreen extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        child: new Center(
-          child: new Text(
-            'BUYMAX',
-            style: GoogleFonts.poppins(
-              textStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 40.0,
-                color: HexColor("#FC4B4B"),
+        // child: ListView.builder(
+        //   itemCount: Provider.of<HomePageProviderData>(context)
+        //       .getData()
+        //       .dataItems
+        //       .length,
+        //   itemBuilder: (BuildContext context, int index) {
+        //     return ListTile(
+        //       title: Text(Provider.of<HomePageProviderData>(context)
+        //           .getData()
+        //           .dataItems[index]
+        //           .id),
+        //     );
+        //   },
+          child: new Center(
+            child: new Text(
+              'BUYMAX',
+              style: GoogleFonts.poppins(
+                textStyle: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 40.0,
+                  color: HexColor("#FC4B4B"),
+                ),
               ),
             ),
           ),
-        ),
       ),
     );
   }
